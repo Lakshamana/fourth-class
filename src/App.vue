@@ -1,17 +1,18 @@
 <template>
   <div id="app">
-    <img src="./assets/logo.png">
-    <HelloWorld/>
+    <Index/>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld'
+import 'bootstrap'
+import 'bootstrap/dist/css/bootstrap.css'
+import Index from './components/Index'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    Index
   }
 }
 </script>
