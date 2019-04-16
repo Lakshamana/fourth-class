@@ -9,7 +9,7 @@
         <div class="col-md-6 offset-md-3 btn-toolbar justify-content-center">
           <div class="row">
             <div class="col-md-4">
-              <div class="btn-group mr-2" role="group" aria-label="First group">
+              <div class="btn-group mr-2 mb-2" role="group" aria-label="First group">
               <button type="button"
                 @click="setMode('create')"
                 class="btn btn-secondary">Create</button>
@@ -61,7 +61,7 @@
           </div>
         </div>
 
-        <div class="col-md-6 offset-md-3 mb-5">
+        <div v-if="mode === 'create'" class="col-md-6 offset-md-3 mb-5">
           <form>
             <div class="form-group">
               <input type="text" class="form-control"
