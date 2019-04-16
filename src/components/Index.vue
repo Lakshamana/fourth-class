@@ -77,7 +77,7 @@
 
             <div class="form-group">
               <input type="email" class="form-control"
-                id="iptName" v-model="newUser.name"
+                id="iptName" v-model="newUser.email"
                 placeholder="Enter Email">
             </div>
             <button type="submit"
