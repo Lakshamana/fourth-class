@@ -56,6 +56,9 @@
                     :aria-controls="'collapse' + id"
                   >more info...</button>
                 </div>
+                <button class="btn btn-default"
+                  @click="deleteUser(user)">
+                &times;</button>
               </div>
             </div>
 
@@ -68,6 +71,19 @@
               <div class="card-body">
                 <p>Real name: {{user.name}}</p>
                 <p>Email: {{user.email}}</p>
+                <div v-if="editUser" class="mb-2">
+                  <input type="text"
+                  :placeholder="user.name"
+                  v-model="newUser.name">
+                  <button
+                    @click="updateUser(user, newUser.name)"
+                    class="btn btn-outline-primary">Submit</button>
+                </div>
+                <button
+                  @click="toggleEditUser"
+                  class="btn btn-link float-right">
+                  edit
+                </button>
               </div>
             </div>
           </div>
@@ -104,7 +120,6 @@
                 placeholder="Enter Email"
               >
             </div>
-            {{newUser | json}}
             <button
               type="submit"
               @click="createUser"
@@ -118,63 +133,92 @@
 </template>
 
 <script>
-import axios from "axios";
+import axios from 'axios'
 
 export default {
-  name: "Index",
+  name: 'Index',
 
   data: () => ({
-    searchString: "",
+    searchString: '',
     users: [],
-    mode: "search",
+    mode: 'search',
+    API: 'http://localhost:3000/users',
     newUser: {
-      name: "",
-      username: "",
-      email: ""
-    }
+      name: '',
+      username: '',
+      email: ''
+    },
+    editUser: false
   }),
 
-  created() {
+  created () {
     axios
-      .get(`https://jsonplaceholder.typicode.com/users`)
+      .get(this.API)
       .then(response => {
-        this.users = response.data;
+        this.users = response.data
       })
-      .catch(console.log);
+      .catch(console.info)
   },
 
   methods: {
-    setMode(newMode) {
-      this.mode = newMode;
+    setMode (newMode) {
+      this.mode = newMode
     },
 
-    createUser() {
-      let userToCreate = {
+    createUser () {
+      const userToCreate = {
         name: this.newUser.name,
         username: this.newUser.username,
         email: this.newUser.email
-      };
+      }
 
       axios
-        .post("https://jsonplaceholder.typicode.com/users", userToCreate)
+        .post(this.API, userToCreate)
         .then(res => {
-          console.log(res.data);
-          this.users.unshift(res.data);
-          this.newUser = {};
-          this.mode = "search";
+          console.info(res.data)
+          this.users.unshift(res.data)
+          this.newUser = {}
+          this.mode = 'search'
         })
-        .catch(console.log);
+        .catch(console.error)
+    },
+
+    updateUser (user, name) {
+      if (name !== '') {
+        Object.assign(user, {name: name})
+      }
+      axios.put(`${this.API}/${user.id}`, user)
+        .then(res => {
+          const idx = this.users.indexOf(user)
+          this.users[idx] = res.data
+          this.mode = 'search'
+        })
+        .catch(console.error)
+    },
+
+    deleteUser (user) {
+      axios.delete(`${this.API}/${user.id}`)
+        .then(res => {
+          const idx = this.users.indexOf(user)
+          this.users.splice(idx, 1)
+          this.mode = 'search'
+        })
+        .catch(console.error)
+    },
+
+    toggleEditUser () {
+      this.editUser = !this.editUser
     }
   },
 
   computed: {
-    filteredUsers() {
+    filteredUsers () {
       return this.users.filter(user => {
-        return user.username.indexOf(this.searchString) !== -1;
-      });
+        return user.username.indexOf(this.searchString) !== -1
+      })
     }
   }
-};
+}
 </script>
 
 <style>
